@@ -2,7 +2,7 @@ name: Update Energy Analytics
 
 on:
   schedule:
-    - cron: '0 12 * * *'
+    - cron: '0 12 * * *'   # run daily at 12:00 UTC
   workflow_dispatch:
   push:
     branches: [ main ]
@@ -16,34 +16,43 @@ jobs:
       pages: write
       id-token: write
 
-    # ✅ REQUIRED for GitHub Pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
+      # 3️⃣ Export OpenElectricity API Key for openelectricity client
+      - name: Export secrets
+        run: |
+          echo "OPENELECTRICITY_API_KEY=${{ secrets.OPENELECTRICITY_API_KEY }}" >> $GITHUB_ENV
+
+      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
 
+      # 5️⃣ Run analytics pipeline (fetch + plots + report)
       - name: Run analytics
         run: |
-         python App/src/app.py
+          python App/src/app.py
 
-
+      # 6️⃣ Upload docs/ for GitHub Pages
       - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs/
 
+      # 7️⃣ Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
