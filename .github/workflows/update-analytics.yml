@@ -2,9 +2,8 @@ name: Update Energy Analytics
 
 on:
   schedule:
-    # Run daily at 12:00 PM UTC (10:00 PM Australian Eastern Time)
     - cron: '0 12 * * *'
-  workflow_dispatch:  
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -17,50 +16,33 @@ jobs:
       pages: write
       id-token: write
 
+    # ✅ REQUIRED for GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      - name: 🧩 Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🧹 Clean old data and old docs
-        run: |
-          echo "🧹 Cleaning App/Data and docs directories..."
-          rm -rf ./App/Data
-          mkdir -p ./App/Data
-          rm -rf ./docs
-          mkdir -p ./docs
-
-      - name: 🐍 Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
-      - name: 📦 Install Dependencies
+      - name: Install dependencies
         run: |
-          echo "📦 Installing dependencies..."
-          pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: 🚀 Run Analytics Pipeline
-        working-directory: ./App/src
-        env:
-          GITHUB_ACTIONS: "true"
+      - name: Run analytics
         run: |
-          echo "🚀 Running analytics pipeline from App/src ..."
           python app.py
-          echo "✔ Pipeline completed."
 
-      - name: 📁 Copy Generated Report & Plots to docs/
-        run: |
-          echo "📁 Copying updated report & images to docs folder..."
-          cp -r App/src/*.png docs/ || true
-          cp -r App/src/*.html docs/ || true
-          cp -r App/Data/*.csv docs/ || true
-          echo "✔ Copy completed."
-
-      - name: 📦 Upload GitHub Pages Artifact
+      - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: ./public
 
-      - name: 🚀 Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
