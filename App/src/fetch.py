@@ -1,27 +1,9 @@
-#!/usr/bin/env python3
-"""
-Data Fetcher for Energy Analytics
-Simplified and refactored data fetching with reusable components
-"""
-
-from dotenv import load_dotenv
-from datetime import datetime, timedelta
-import pandas as pd
 import os
-from typing import Dict, Optional
+from datetime import datetime
+import pandas as pd
+from typing import Optional, Dict
 
-# Import utilities and configuration
-from utils import DataUtils, FileUtils, ValidationUtils
-from config import Config, ErrorMessages
-
-# Load environment variables
-for path in Config.CREDENTIAL_PATHS:
-    if os.path.exists(path):
-        load_dotenv(path)
-        break
-
-from openelectricity import OEClient
-from openelectricity.types import DataMetric
+# ... other imports remain ...
 
 class EnergyDataFetcher:
     """Simplified and cleaned up data fetcher"""
@@ -30,137 +12,57 @@ class EnergyDataFetcher:
         """Initialize the fetcher with configuration"""
         self.client = OEClient()
         self.network_code = network_code
-        self.data_dir = FileUtils.get_data_path()
-        FileUtils.ensure_directory(self.data_dir)
-    
-    def fetch_data(self, metric: str = 'POWER', use_cache: bool = True) -> Dict[str, pd.DataFrame]:
-        """Fetch all required datasets using configuration"""
-        results = {}
-        
-        for dataset_key, config in Config.DATASETS.items():
-            print(f"🔄 Fetching {dataset_key}...")
-            
-            if use_cache:
-                cached_df = self._load_from_cache(dataset_key, metric)
-                if cached_df is not None:
-                    results[dataset_key] = cached_df
-                    print(f"📁 Loaded {dataset_key} from cache ({len(cached_df)} records)")
-                    continue
-            
-            # Fetch fresh data
-            df = self._fetch_dataset(dataset_key, config, metric)
-            if df is not None:
-                results[dataset_key] = df
-                self._save_to_cache(df, dataset_key, metric)
-                print(f"✅ Fetched {dataset_key} ({len(df)} records)")
-            else:
-                print(f"❌ Failed to fetch {dataset_key}")
-        
-        return results
-    
-    def _fetch_dataset(self, dataset_key: str, config: dict, metric: str) -> Optional[pd.DataFrame]:
-        """Fetch a single dataset from the API"""
+
+        # === ENSURE data_dir points to repo-relative App/Data ===
+        # If FileUtils provides a path, prefer that; otherwise set repo root / App/Data
         try:
-            start_date, end_date = self._calculate_date_range(config)
-            metric_enum = self._get_metric_enum(metric)
-            
-            response = self.client.get_network_data(
-                network_code=self.network_code,
-                metrics=[metric_enum],
-                interval=config['interval'],
-                date_start=start_date,
-                date_end=end_date
-            )
-            
-            return self._process_api_response(response, config, dataset_key)
-            
-        except Exception as e:
-            print(ErrorMessages.format_error('PLOT_GENERATION_ERROR', 
-                                           plot_type=dataset_key, error=str(e)))
-            return None
-    
-    def _calculate_date_range(self, config: dict) -> tuple[datetime, datetime]:
-        """Calculate date range based on configuration"""
-        end_date = datetime.now()
-        
-        if config.get('exclude_current_month', False) and 'months_back' in config:
-            # Monthly data logic - exclude current month
-            current_date = datetime.now()
-            if current_date.month == 1:
-                end_date = datetime(current_date.year - 1, 12, 1, 0, 0, 0)
-            else:
-                end_date = datetime(current_date.year, current_date.month - 1, 1, 0, 0, 0)
-            
-            # Calculate start date
-            months_back = config['months_back']
-            total_months = end_date.year * 12 + end_date.month - months_back
-            start_year = total_months // 12
-            start_month = total_months % 12
-            if start_month == 0:
-                    start_month = 12
-                start_year -= 1
-            
-            start_date = datetime(start_year, start_month, 1)
+            candidate = FileUtils.get_data_path()
+        except Exception:
+            candidate = None
+
+        if candidate and os.path.isabs(candidate):
+            self.data_dir = candidate
         else:
-            # Days-based logic
-            start_date = end_date - timedelta(days=config['days_back'])
-        
-        return start_date, end_date
-    
-    def _get_metric_enum(self, metric: str) -> DataMetric:
-        """Convert metric string to enum"""
-        metric_enum = getattr(DataMetric, metric.upper(), None)
-        if not metric_enum:
-            raise ValueError(ErrorMessages.format_error('INVALID_METRIC', metric=metric))
-        return metric_enum
-    
-    def _process_api_response(self, response, config: dict, dataset_key: str) -> Optional[pd.DataFrame]:
-        """Process API response into DataFrame"""
-        if not response or not response.data:
-            return None
-        
-        df_data = []
-        for series in response.data:
-            if series.results:
-                for result in series.results:
-                    for point in result.data:
-                        timestamp, value = point.root
-                        df_data.append({
-                            'timestamp': timestamp,
-                            'value': value,
-                            'metric': series.metric,
-                            'unit': series.unit,
-                            'interval': config['interval'],
-                            'network': series.network_code
-                        })
-        
-        if df_data:
-            df = pd.DataFrame(df_data)
-            df = DataUtils.safe_convert_datetime(df)
-            return df.sort_values('timestamp')
-        
-        return None
-    
+            # use repo root relative path (cwd is repo root when run by GH Actions)
+            self.data_dir = os.path.join(os.getcwd(), "App", "Data")
+
+        # create directory if missing
+        os.makedirs(self.data_dir, exist_ok=True)
+        # You can also keep FileUtils.ensure_directory for compatibility:
+        try:
+            FileUtils.ensure_directory(self.data_dir)
+        except Exception:
+            pass
+
     def _get_cache_filename(self, dataset_key: str, metric: str) -> str:
         """Generate cache filename"""
-        return f"{self.network_code}_{metric}_{dataset_key}.csv"
-    
+        # prefer simple, consistent filenames
+        safe_dataset = dataset_key.replace(" ", "_")
+        safe_metric = metric.upper()
+        return f"{self.network_code}_{safe_metric}_{safe_dataset}.csv"
+
     def _save_to_cache(self, df: pd.DataFrame, dataset_key: str, metric: str) -> None:
-        """Save DataFrame to cache"""
+        """Save DataFrame to cache (overwrite behaviour)"""
         try:
             filename = self._get_cache_filename(dataset_key, metric)
             filepath = os.path.join(self.data_dir, filename)
             
             df_save = df.copy()
-            df_save['fetch_timestamp'] = datetime.now()
+            # add a fetch timestamp column for traceability (optional)
+            df_save['fetch_timestamp'] = datetime.utcnow().isoformat()
             df_save['dataset_type'] = dataset_key
-            
+
+            # ensure directory exists (defensive)
+            os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
+            # overwrite the file each time (this matches "keep newest only")
             df_save.to_csv(filepath, index=False)
-            
+            print(f"📦 Saved cache to {filepath}")
+
         except Exception as e:
             print(ErrorMessages.format_error('CACHE_SAVE_ERROR', 
                                            dataset=dataset_key, error=str(e)))
-    
+
     def _load_from_cache(self, dataset_key: str, metric: str) -> Optional[pd.DataFrame]:
         """Load DataFrame from cache if fresh"""
         try:
@@ -170,60 +72,20 @@ class EnergyDataFetcher:
             if not os.path.exists(filepath):
                 return None
             
-            # Check cache age
+            # Check cache age (creation time)
             file_time = datetime.fromtimestamp(os.path.getctime(filepath))
-            age_hours = (datetime.now() - file_time).total_seconds() / 3600
+            age_hours = (datetime.utcnow() - file_time).total_seconds() / 3600.0
             
             if age_hours > Config.CACHE_EXPIRY_HOURS:
+                print(f"🕒 Cache expired for {filename} (age {age_hours:.1f}h > {Config.CACHE_EXPIRY_HOURS}h)")
                 return None
             
             df = pd.read_csv(filepath)
-            return DataUtils.safe_convert_datetime(df)
+            df = DataUtils.safe_convert_datetime(df)
+            print(f"📥 Loaded cache from {filepath} ({len(df)} rows, age {age_hours:.1f}h)")
+            return df
             
         except Exception as e:
             print(ErrorMessages.format_error('CACHE_LOAD_ERROR', 
                                            dataset=dataset_key, error=str(e)))
             return None
-
-# Simplified public interface functions
-def fetch_energy_data(network: str = Config.DEFAULT_NETWORK, 
-                     metric: str = 'POWER', 
-                     use_cache: bool = True) -> Dict[str, pd.DataFrame]:
-    """Fetch energy data for a single metric"""
-    fetcher = EnergyDataFetcher(network)
-    return fetcher.fetch_data(metric, use_cache)
-
-def fetch_power_and_market_data(network: str = Config.DEFAULT_NETWORK, 
-                               use_cache: bool = True) -> Dict[str, Dict[str, pd.DataFrame]]:
-    """Fetch both POWER and MARKET_VALUE data"""
-    print("🔌 Fetching POWER data...")
-    power_data = fetch_energy_data(network, 'POWER', use_cache)
-    
-    print("💰 Fetching MARKET_VALUE data...")
-    market_data = fetch_energy_data(network, 'MARKET_VALUE', use_cache)
-    
-    return {
-        'power': power_data,
-        'market_value': market_data
-    }
-
-# Backward compatibility
-def get_power_data(network_code: str = Config.DEFAULT_NETWORK, 
-                  force_refresh: bool = False) -> Dict[str, pd.DataFrame]:
-    """Legacy function for backward compatibility"""
-    return fetch_energy_data(network_code, 'POWER', not force_refresh)
-
-if __name__ == "__main__":
-    # Test the fetcher
-    print("🔌 Testing Energy Data Fetcher")
-    print("=" * 40)
-    
-    data = fetch_energy_data('NEM', 'POWER', use_cache=True)
-    
-    if data:
-        print(f"\n📊 Successfully fetched {len(data)} datasets:")
-        for dataset_key, df in data.items():
-            date_range = df['timestamp'].max() - df['timestamp'].min()
-            print(f"  • {dataset_key}: {len(df)} records over {date_range.days} days")
-    else:
-        print("❌ No data retrieved")
