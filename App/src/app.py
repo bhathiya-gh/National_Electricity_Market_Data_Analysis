@@ -20,9 +20,9 @@ def main():
         # ------------------------------------------------------------------
         # 🔥 FIX: Reliable detection of GitHub Actions (string == "true")
         # ------------------------------------------------------------------
-            # Always fetch fresh data (disable cache)
-            use_cache = False
-            print("🔄 Fetching fresh data (cache disabled)")
+        # Always fetch fresh data (disable cache)
+        use_cache = False
+        print("🔄 Fetching fresh data (cache disabled)")
         # ------------------------------------------------------------------
         
         # Fetch both power and market value data
