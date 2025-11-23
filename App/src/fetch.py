@@ -97,7 +97,7 @@ class EnergyDataFetcher:
             start_year = total_months // 12
             start_month = total_months % 12
             if start_month == 0:
-                start_month = 12
+                    start_month = 12
                 start_year -= 1
             
             start_date = datetime(start_year, start_month, 1)
