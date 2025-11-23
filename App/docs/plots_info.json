@@ -1,0 +1,37 @@
+[
+  {
+    "filename": "combined_monthly_analysis.png",
+    "title": "\ud83d\udcca Combined Monthly Analysis: Power & Market Trends",
+    "description": "Dual-axis chart showing both power consumption and market values over 24 months, revealing correlations between demand and pricing patterns."
+  },
+  {
+    "filename": "combined_hourly_analysis.png",
+    "title": "\u23f0 Combined Hourly Analysis: Power & Market Patterns",
+    "description": "Hourly correlation between power consumption and market values over the past month, showing daily patterns and market dynamics."
+  },
+  {
+    "filename": "combined_fivemin_analysis.png",
+    "title": "\u26a1 Combined 5-Minute Analysis: Real-time Data",
+    "description": "High-resolution view of power generation and market value fluctuations with 5-minute intervals, capturing real-time market dynamics."
+  },
+  {
+    "filename": "monthly_power_analysis.png",
+    "title": "\ud83d\udd0c Monthly Power Analysis",
+    "description": "Power consumption trends over 24 months showing seasonal patterns and long-term demand variations."
+  },
+  {
+    "filename": "monthly_market_analysis.png",
+    "title": "\ud83d\udcb0 Monthly Market Analysis",
+    "description": "Market value trends over 24 months revealing pricing patterns, seasonal variations, and market dynamics."
+  },
+  {
+    "filename": "hourly_power_analysis.png",
+    "title": "\u23f0 Hourly Power Patterns",
+    "description": "Detailed hourly power consumption patterns revealing daily demand cycles, peak usage periods, and weekend variations."
+  },
+  {
+    "filename": "fivemin_market_analysis.png",
+    "title": "\u26a1 Real-time Market Analysis",
+    "description": "High-frequency market value fluctuations with volatility bands, capturing rapid price changes and market spikes."
+  }
+]

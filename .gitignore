@@ -1,0 +1,92 @@
+# Virtual Environment
+nem.env/
+venv/
+env/
+ENV/
+.venv/
+
+# API Credentials
+App/credentials.txt
+credentials.txt
+*.env
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Data Files (Cache) - Commented out for GitHub Pages deployment
+# App/Data/*.csv
+# Data/*.csv
+
+# Analytics Output - Included for GitHub Pages static hosting
+# App/Analytics/*.txt
+# App/Analytics/*.png
+# Analytics/*.txt
+# Analytics/*.png
+
+# Only exclude temporary/intermediate files
+App/Data/*.tmp
+App/Analytics/*.tmp
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json

@@ -1,0 +1,27 @@
+{
+  "plots": [
+    {
+      "filename": "combined_monthly_analysis.png",
+      "title": "\ud83d\udcca Combined Monthly Analysis: Power & Market Trends",
+      "description": "Dual-axis chart showing both power consumption and market values over 24 months, revealing correlations between demand and pricing patterns."
+    },
+    {
+      "filename": "combined_hourly_analysis.png",
+      "title": "\u23f0 Combined Hourly Analysis: Power & Market Patterns",
+      "description": "Hourly correlation between power consumption and market values over the past month, showing daily patterns and market dynamics."
+    },
+    {
+      "filename": "combined_fivemin_analysis.png",
+      "title": "\u26a1 Combined 5-Minute Analysis: Real-time Power & Market",
+      "description": "High-resolution view capturing rapid fluctuations with 5-minute intervals, essential for understanding real-time market behavior."
+    },
+    {
+      "filename": "combined_daily_averages_analysis.png",
+      "title": "\ud83d\udcca Daily Pattern Intelligence",
+      "description": "Average power consumption and market values for each hour of the day, revealing typical daily demand curves and pricing patterns."
+    }
+  ],
+  "generated_at": "2025-11-08T12:40:23.913942",
+  "network": "NEM",
+  "total_plots": 4
+}

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔌⚡ Dynamic Energy Analytics Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2E86AB;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        .timestamp {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-style: italic;
+            background: linear-gradient(135deg, #e8f4f8 0%, #d4edda 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #2E86AB;
+        }
+        h2 {
+            color: #A23B72;
+            border-bottom: 3px solid #A23B72;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            font-size: 1.8em;
+        }
+        .metric-info {
+            background: linear-gradient(135deg, #e8f4f8 0%, #f0f8ff 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #2E86AB;
+            font-size: 1.05em;
+        }
+        .dataset-section {
+            margin: 30px 0;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .dataset-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #2E86AB 0%, #A23B72 100%);
+            padding: 15px 25px;
+            margin: 0;
+        }
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            background: white;
+        }
+        .stats-table tr {
+            border-bottom: 1px solid #e9ecef;
+        }
+        .stats-table tr:last-child {
+            border-bottom: none;
+        }
+        .stats-table td {
+            padding: 15px 25px;
+            font-size: 1.05em;
+        }
+        .stats-table td:first-child {
+            font-weight: 600;
+            color: #495057;
+            width: 35%;
+            background: #f8f9fa;
+        }
+        .stats-table td:last-child {
+            color: #2E86AB;
+            font-weight: 500;
+        }
+        .insights-section {
+            background: linear-gradient(135deg, #fff9e6 0%, #ffeaa7 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 5px solid #ffc107;
+        }
+        .insights-title {
+            font-weight: 700;
+            color: #856404;
+            margin: 0 0 15px 0;
+            font-size: 1.3em;
+        }
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .insight-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .insight-label {
+            font-weight: 600;
+            color: #856404;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .insight-value {
+            color: #495057;
+            margin-top: 4px;
+            font-size: 1.1em;
+        }
+        .technical-report-link { 
+            text-align: center; 
+            margin: 25px 0; 
+        }
+        .technical-report-link a { 
+            background: linear-gradient(135deg, #2E86AB 0%, #A23B72 100%);
+            color: white; 
+            text-decoration: none; 
+            font-weight: bold; 
+            font-size: 1.3em; 
+            padding: 15px 30px;
+            border-radius: 25px;
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+        .technical-report-link a:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="technical-report-link">
+            <a href="./index.html">📊 Back to Dashboard</a>
+        </div>
+        <h1>🔌⚡ Dynamic Energy Analytics Report</h1>
+        <div class="timestamp">
+            📊 Generated: 2025-11-08 12:40:23<br>
+            🔄 Auto-updated with latest data from OpenElectricity API
+        </div>
+        <h2>🔌 Power Data Analysis</h2>
+        <div class="metric-info">
+            <strong>Network:</strong> NEM &nbsp;&nbsp;
+            <strong>Metric:</strong> power &nbsp;&nbsp;
+            <strong>Unit:</strong> MW
+        </div>
+        <div class="dataset-section">
+            <div class="dataset-title">MONTHLY 24MONTHS</div>
+            <table class="stats-table">
+                <tr>
+                    <td>Total Records</td>
+                    <td>23</td>
+                </tr>
+                <tr>
+                    <td>Time Period</td>
+                    <td>2023-11-01 to 2025-09-01</td>
+                </tr>
+                <tr>
+                    <td>Minimum Value</td>
+                    <td>192M MW</td>
+                </tr>
+                <tr>
+                    <td>Maximum Value</td>
+                    <td>245M MW</td>
+                </tr>
+                <tr>
+                    <td>Average Value</td>
+                    <td>220M MW</td>
+                </tr>
+                <tr>
+                    <td>Standard Deviation</td>
+                    <td>14M MW</td>
+                </tr>
+            </table>
+        </div>
+        <div class="dataset-section">
+            <div class="dataset-title">HOURLY 1MONTH</div>
+            <table class="stats-table">
+                <tr>
+                    <td>Total Records</td>
+                    <td>720</td>
+                </tr>
+                <tr>
+                    <td>Time Period</td>
+                    <td>2025-10-09 to 2025-11-08</td>
+                </tr>
+                <tr>
+                    <td>Minimum Value</td>
+                    <td>0 MW</td>
+                </tr>
+                <tr>
+                    <td>Maximum Value</td>
+                    <td>379K MW</td>
+                </tr>
+                <tr>
+                    <td>Average Value</td>
+                    <td>252K MW</td>
+                </tr>
+                <tr>
+                    <td>Standard Deviation</td>
+                    <td>39K MW</td>
+                </tr>
+            </table>
+        </div>
+        <div class="dataset-section">
+            <div class="dataset-title">FIVEMIN 1WEEK</div>
+            <table class="stats-table">
+                <tr>
+                    <td>Total Records</td>
+                    <td>2,016</td>
+                </tr>
+                <tr>
+                    <td>Time Period</td>
+                    <td>2025-11-01 to 2025-11-08</td>
+                </tr>
+                <tr>
+                    <td>Minimum Value</td>
+                    <td>16K MW</td>
+                </tr>
+                <tr>
+                    <td>Maximum Value</td>
+                    <td>29K MW</td>
+                </tr>
+                <tr>
+                    <td>Average Value</td>
+                    <td>21K MW</td>
+                </tr>
+                <tr>
+                    <td>Standard Deviation</td>
+                    <td>3K MW</td>
+                </tr>
+            </table>
+        </div>
+        <div class="insights-section">
+            <div class="insights-title">💡 Power Insights</div>
+            <div class="insights-grid">
+                <div class="insight-item">
+                    <div class="insight-label">Trend Direction</div>
+                    <div class="insight-value">Increasing</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Peak Month</div>
+                    <div class="insight-value">7</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Low Month</div>
+                    <div class="insight-value">9</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Volatility Index</div>
+                    <div class="insight-value">0.060</div>
+                </div>
+            </div>
+        </div>
+        <h2>💰 Market Value Data Analysis</h2>
+        <div class="metric-info">
+            <strong>Network:</strong> NEM &nbsp;&nbsp;
+            <strong>Metric:</strong> market_value &nbsp;&nbsp;
+            <strong>Unit:</strong> AUD ($)
+        </div>
+        <div class="dataset-section">
+            <div class="dataset-title">MONTHLY 24MONTHS</div>
+            <table class="stats-table">
+                <tr>
+                    <td>Total Records</td>
+                    <td>23</td>
+                </tr>
+                <tr>
+                    <td>Time Period</td>
+                    <td>2023-11-01 to 2025-09-01</td>
+                </tr>
+                <tr>
+                    <td>Minimum Value</td>
+                    <td>$681.30M</td>
+                </tr>
+                <tr>
+                    <td>Maximum Value</td>
+                    <td>$4.89B</td>
+                </tr>
+                <tr>
+                    <td>Average Value</td>
+                    <td>$1.96B</td>
+                </tr>
+                <tr>
+                    <td>Standard Deviation</td>
+                    <td>$946.54M</td>
+                </tr>
+            </table>
+        </div>
+        <div class="dataset-section">
+            <div class="dataset-title">HOURLY 1MONTH</div>
+            <table class="stats-table">
+                <tr>
+                    <td>Total Records</td>
+                    <td>720</td>
+                </tr>
+                <tr>
+                    <td>Time Period</td>
+                    <td>2025-10-09 to 2025-11-08</td>
+                </tr>
+                <tr>
+                    <td>Minimum Value</td>
+                    <td>$-1.25M</td>
+                </tr>
+                <tr>
+                    <td>Maximum Value</td>
+                    <td>$20.90M</td>
+                </tr>
+                <tr>
+                    <td>Average Value</td>
+                    <td>$1.43M</td>
+                </tr>
+                <tr>
+                    <td>Standard Deviation</td>
+                    <td>$1.56M</td>
+                </tr>
+            </table>
+        </div>
+        <div class="dataset-section">
+            <div class="dataset-title">FIVEMIN 1WEEK</div>
+            <table class="stats-table">
+                <tr>
+                    <td>Total Records</td>
+                    <td>2,016</td>
+                </tr>
+                <tr>
+                    <td>Time Period</td>
+                    <td>2025-11-01 to 2025-11-08</td>
+                </tr>
+                <tr>
+                    <td>Minimum Value</td>
+                    <td>$-54.99K</td>
+                </tr>
+                <tr>
+                    <td>Maximum Value</td>
+                    <td>$888.05K</td>
+                </tr>
+                <tr>
+                    <td>Average Value</td>
+                    <td>$102.12K</td>
+                </tr>
+                <tr>
+                    <td>Standard Deviation</td>
+                    <td>$116.73K</td>
+                </tr>
+            </table>
+        </div>
+        <div class="insights-section">
+            <div class="insights-title">💡 Market Value Insights</div>
+            <div class="insights-grid">
+                <div class="insight-item">
+                    <div class="insight-label">Trend Direction</div>
+                    <div class="insight-value">Increasing</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Peak Month</div>
+                    <div class="insight-value">6</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Low Month</div>
+                    <div class="insight-value">9</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Volatility Index</div>
+                    <div class="insight-value">0.472</div>
+                </div>
+            </div>
+        </div>
+        <div class="technical-report-link">
+            <a href="./index.html">📊 Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
