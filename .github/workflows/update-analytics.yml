@@ -36,7 +36,8 @@ jobs:
 
       - name: Run analytics
         run: |
-          python app.py
+         python App/src/app.py
+
 
       - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
