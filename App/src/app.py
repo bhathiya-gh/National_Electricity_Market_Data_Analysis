@@ -1,16 +1,3 @@
-#!/usr/bin/env python3
-"""
-Dual Energy Analytics App
-Analyzes both Power and Market Value data with combined visualizations
-"""
-
-import sys
-import os
-from fetch import fetch_power_and_market_data
-from plots import generate_energy_plots
-from report_generator import generate_energy_report
-from config import Config, ConsoleMessages, ErrorMessages
-
 def main():
     """Main function for dual analytics"""
     
@@ -30,10 +17,16 @@ def main():
         
         print(f"\n{ConsoleMessages.STATUS['fetching_data']}")
         
-        # Force fresh data in automated environments (GitHub Actions)
-        use_cache = not bool(os.getenv('GITHUB_ACTIONS', False))
-        if not use_cache:
-            print("🔄 Running in CI/CD - forcing fresh data fetch")
+        # ------------------------------------------------------------------
+        # 🔥 FIX: Reliable detection of GitHub Actions (string == "true")
+        # ------------------------------------------------------------------
+        if os.getenv("GITHUB_ACTIONS", "").lower() == "true":
+            use_cache = False
+            print("🔄 CI/CD DETECTED — forcing fresh data fetch")
+        else:
+            use_cache = True
+            print("💾 Local environment — using cache when available")
+        # ------------------------------------------------------------------
         
         # Fetch both power and market value data
         all_data = fetch_power_and_market_data(Config.DEFAULT_NETWORK, use_cache=use_cache)
@@ -66,6 +59,3 @@ def main():
         print("   • Internet connection")
         print("   • Valid API key in credentials.txt")
         print("   • Required packages installed")
-
-if __name__ == "__main__":
-    main()
