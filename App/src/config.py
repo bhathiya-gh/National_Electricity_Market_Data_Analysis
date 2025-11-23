@@ -14,7 +14,7 @@ class Config:
     DEFAULT_NETWORK = 'NEM'
     
     # Data settings
-    CACHE_EXPIRY_HOURS = 6
+    CACHE_EXPIRY_HOURS = 1/60  # 1 minute
     DEFAULT_METRICS = ['POWER', 'MARKET_VALUE']
     
     # Dataset configurations

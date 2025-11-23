@@ -20,12 +20,9 @@ def main():
         # ------------------------------------------------------------------
         # 🔥 FIX: Reliable detection of GitHub Actions (string == "true")
         # ------------------------------------------------------------------
-        if os.getenv("GITHUB_ACTIONS", "").lower() == "true":
+            # Always fetch fresh data (disable cache)
             use_cache = False
-            print("🔄 CI/CD DETECTED — forcing fresh data fetch")
-        else:
-            use_cache = True
-            print("💾 Local environment — using cache when available")
+            print("🔄 Fetching fresh data (cache disabled)")
         # ------------------------------------------------------------------
         
         # Fetch both power and market value data
