@@ -1,3 +1,5 @@
+.env
+App/credentials.txt
 # Virtual Environment
 nem.env/
 venv/

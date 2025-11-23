@@ -4,6 +4,7 @@ Data Fetcher for Energy Analytics
 Simplified and refactored data fetching with reusable components
 """
 
+
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import pandas as pd
@@ -14,11 +15,8 @@ from typing import Dict, Optional
 from utils import DataUtils, FileUtils, ValidationUtils
 from config import Config, ErrorMessages
 
-# Load environment variables
-for path in Config.CREDENTIAL_PATHS:
-    if os.path.exists(path):
-        load_dotenv(path)
-        break
+# Load environment variables from .env
+load_dotenv()
 
 from openelectricity import OEClient
 from openelectricity.types import DataMetric
@@ -38,24 +36,23 @@ class EnergyDataFetcher:
         results = {}
         
         for dataset_key, config in Config.DATASETS.items():
-            print(f"🔄 Fetching {dataset_key}...")
-            
+            print(f"[DEBUG] Fetching {dataset_key} (metric={metric}, use_cache={use_cache})...")
             if use_cache:
                 cached_df = self._load_from_cache(dataset_key, metric)
                 if cached_df is not None:
+                    print(f"[DEBUG] Loaded {dataset_key} from cache ({len(cached_df)} records)")
                     results[dataset_key] = cached_df
-                    print(f"📁 Loaded {dataset_key} from cache ({len(cached_df)} records)")
                     continue
-            
             # Fetch fresh data
             df = self._fetch_dataset(dataset_key, config, metric)
             if df is not None:
+                print(f"[DEBUG] API returned {len(df)} records for {dataset_key}")
                 results[dataset_key] = df
                 self._save_to_cache(df, dataset_key, metric)
-                print(f"✅ Fetched {dataset_key} ({len(df)} records)")
+                print(f"[DEBUG] Saved {dataset_key} to cache as CSV.")
             else:
-                print(f"❌ Failed to fetch {dataset_key}")
-        
+                print(f"[DEBUG] Failed to fetch {dataset_key} from API.")
+        print(f"[DEBUG] fetch_data complete. Results: { {k: len(v) for k,v in results.items()} }")
         return results
     
     def _fetch_dataset(self, dataset_key: str, config: dict, metric: str) -> Optional[pd.DataFrame]:
@@ -97,7 +94,7 @@ class EnergyDataFetcher:
             start_year = total_months // 12
             start_month = total_months % 12
             if start_month == 0:
-                    start_month = 12
+                start_month = 12
                 start_year -= 1
             
             start_date = datetime(start_year, start_month, 1)
@@ -150,13 +147,12 @@ class EnergyDataFetcher:
         try:
             filename = self._get_cache_filename(dataset_key, metric)
             filepath = os.path.join(self.data_dir, filename)
-            
+            print(f"[DEBUG] Saving {dataset_key} to {filepath} (metric={metric})")
             df_save = df.copy()
             df_save['fetch_timestamp'] = datetime.now()
             df_save['dataset_type'] = dataset_key
-            
             df_save.to_csv(filepath, index=False)
-            
+            print(f"[DEBUG] CSV write complete for {filepath} ({len(df_save)} records)")
         except Exception as e:
             print(ErrorMessages.format_error('CACHE_SAVE_ERROR', 
                                            dataset=dataset_key, error=str(e)))
@@ -166,20 +162,20 @@ class EnergyDataFetcher:
         try:
             filename = self._get_cache_filename(dataset_key, metric)
             filepath = os.path.join(self.data_dir, filename)
-            
+            print(f"[DEBUG] Attempting to load cache for {dataset_key} from {filepath}")
             if not os.path.exists(filepath):
+                print(f"[DEBUG] Cache file does not exist: {filepath}")
                 return None
-            
             # Check cache age
             file_time = datetime.fromtimestamp(os.path.getctime(filepath))
             age_hours = (datetime.now() - file_time).total_seconds() / 3600
-            
+            print(f"[DEBUG] Cache age for {dataset_key}: {age_hours:.2f} hours (expiry={Config.CACHE_EXPIRY_HOURS} hours)")
             if age_hours > Config.CACHE_EXPIRY_HOURS:
+                print(f"[DEBUG] Cache expired for {dataset_key}")
                 return None
-            
             df = pd.read_csv(filepath)
+            print(f"[DEBUG] Loaded {len(df)} records from cache for {dataset_key}")
             return DataUtils.safe_convert_datetime(df)
-            
         except Exception as e:
             print(ErrorMessages.format_error('CACHE_LOAD_ERROR', 
                                            dataset=dataset_key, error=str(e)))

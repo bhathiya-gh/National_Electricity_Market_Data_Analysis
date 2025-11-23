@@ -53,15 +53,17 @@ class EnergyReportGenerator:
     
     def generate_comprehensive_report(self) -> str:
         """Generate comprehensive HTML report with current data using clean template format"""
-        
+        print("[DEBUG] Starting comprehensive report generation...")
         # Calculate statistics for all datasets using utilities
         power_stats = self._calculate_all_stats(self.power_data)
+        print(f"[DEBUG] Power stats calculated: {list(power_stats.keys())}")
         market_stats = self._calculate_all_stats(self.market_data)
-        
+        print(f"[DEBUG] Market stats calculated: {list(market_stats.keys())}")
         # Analyze trends using TrendAnalyzer
         power_trends = self._analyze_dataset_trends(self.power_data.get('monthly_24months', pd.DataFrame()))
+        print(f"[DEBUG] Power trends: {power_trends}")
         market_trends = self._analyze_dataset_trends(self.market_data.get('monthly_24months', pd.DataFrame()))
-        
+        print(f"[DEBUG] Market trends: {market_trends}")
         # Generate report data
         report_data = {
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -75,8 +77,10 @@ class EnergyReportGenerator:
                 'market_records': sum(len(df) for df in self.market_data.values())
             }
         }
-        
-        return self._build_html_report(report_data)
+        print(f"[DEBUG] Report data prepared: {report_data['totals']}")
+        html_report = self._build_html_report(report_data)
+        print("[DEBUG] HTML report built.")
+        return html_report
     
     def _get_html_header(self, timestamp: str) -> str:
         """Generate HTML header with CSS"""
@@ -372,19 +376,22 @@ class EnergyReportGenerator:
     def save_report(self) -> str:
         """Generate and save the comprehensive report"""
         try:
+            print("[DEBUG] Calling generate_comprehensive_report...")
             report_html = self.generate_comprehensive_report()
             report_path = os.path.join(self.docs_dir, 'dual_energy_report.html')
-            
-            if FileUtils.save_json({'html': report_html}, report_path.replace('.html', '_temp.json')):
+            print(f"[DEBUG] Report path: {report_path}")
+            temp_json_path = report_path.replace('.html', '_temp.json')
+            print(f"[DEBUG] Saving temp JSON to: {temp_json_path}")
+            if FileUtils.save_json({'html': report_html}, temp_json_path):
+                print(f"[DEBUG] Temp JSON saved successfully.")
                 # Save as HTML file
                 with open(report_path, 'w', encoding='utf-8') as f:
                     f.write(report_html)
-                
                 print(f"📄 Dynamic report saved to {report_path}")
                 return report_path
             else:
+                print("[DEBUG] Failed to save temp JSON.")
                 raise Exception("Failed to save report data")
-            
         except Exception as e:
             print(ErrorMessages.format_error('FILE_SAVE_ERROR', 
                                            filepath=report_path, error=str(e)))

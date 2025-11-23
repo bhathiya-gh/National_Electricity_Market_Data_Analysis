@@ -1,10 +1,19 @@
+#!/usr/bin/env python3
+
+import sys
+
+from config import Config, ConsoleMessages, ErrorMessages
+from fetch import fetch_power_and_market_data
+from plots import generate_energy_plots
+from report_generator import generate_energy_report
+
 def main():
     """Main function for dual analytics"""
     
     print(ConsoleMessages.APP_HEADER)
     
     try:
-        # Check if running in non-interactive environment
+        # Check if running in non-interactive mode (GitHub Actions)
         if not sys.stdin.isatty():
             print(f"\n{ConsoleMessages.STATUS['automated_mode']}")
             confirm = 'y'
@@ -17,15 +26,11 @@ def main():
         
         print(f"\n{ConsoleMessages.STATUS['fetching_data']}")
         
-        # ------------------------------------------------------------------
-        # 🔥 FIX: Reliable detection of GitHub Actions (string == "true")
-        # ------------------------------------------------------------------
         # Always fetch fresh data (disable cache)
-        use_cache = False
         print("🔄 Fetching fresh data (cache disabled)")
-        # ------------------------------------------------------------------
+        use_cache = False
         
-        # Fetch both power and market value data
+        # Fetch POWER + MARKET_VALUE
         all_data = fetch_power_and_market_data(Config.DEFAULT_NETWORK, use_cache=use_cache)
         power_data = all_data.get('power', {})
         market_data = all_data.get('market_value', {})
@@ -42,7 +47,6 @@ def main():
         print(f"\n{ConsoleMessages.STATUS['generating_report']}")
         report_path = generate_energy_report(power_data=power_data, market_data=market_data)
         
-        # Display completion message
         completion_msg = ConsoleMessages.COMPLETION_MESSAGE.format(plot_count=len(plots_info))
         print(f"\n{completion_msg}")
         if report_path:
@@ -54,5 +58,7 @@ def main():
         print(f"\n❌ Error: {e}")
         print("💡 Make sure you have:")
         print("   • Internet connection")
-        print("   • Valid API key in credentials.txt")
         print("   • Required packages installed")
+
+if __name__ == "__main__":
+    main()
