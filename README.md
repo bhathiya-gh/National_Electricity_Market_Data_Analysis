@@ -273,3 +273,5 @@ This project is licensed under the MIT License.
 **Legal Notice**: This application uses electricity market data originally collected and published by the Australian Energy Market Operator (AEMO). The data is accessed through the OpenElectricity API under AEMO's open data terms. All market data remains the intellectual property of AEMO and is used in accordance with their data usage policies.
 
 **Data Accuracy**: While this application processes AEMO data accurately, users should refer to official AEMO publications for authoritative market information and regulatory compliance.
+
+Test1
