@@ -6,7 +6,7 @@ venv/
 env/
 ENV/
 .venv/
-
+Notes.txt
 # API Credentials
 App/credentials.txt
 credentials.txt
