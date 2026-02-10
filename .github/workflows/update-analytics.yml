@@ -42,11 +42,12 @@ jobs:
           pip install -r requirements.txt
 
       # 5️⃣ Run analytics pipeline (fetch + plots + report)
-      - name: Run analytics
+      - name: Run analytics and generate files for deployment
         run: |
           python App/src/app.py
+          ls -la docs/  # Show generated files
 
-      # 6️⃣ Upload docs/ for GitHub Pages
+      # 6️⃣ Upload docs/ for GitHub Pages (files generated only for deployment)
       - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
